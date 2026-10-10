@@ -1,0 +1,32 @@
+from rich import print
+from time import sleep
+import random, threading
+
+random.seed(2562)
+
+class UnreliableChannel:
+    def __init__(self, loss_prob, corrupt_prob, delay_prob, delay_time):
+        self.loss_prob = loss_prob
+        self.corrupt_prob = corrupt_prob
+        self.delay_prob = delay_prob
+        self.delay_time = delay_time
+
+    def transmit(self, packet, destination):
+        if random.random() < self.loss_prob:
+            print(f'[bold yellow]LOG: Packet/ACK {packet.seq_num} lost in channel.[/bold yellow]')
+            return
+
+        if random.random() < self.corrupt_prob:
+            packet.payload = 'CORRUPTED_' + packet.payload
+            print(f'[bold yellow]LOG: Packet/ACk {packet.seq_num} corrupted in channel.[/bold yellow]')
+
+        if random.random() < self.delay_prob:
+            print(f'[bold yellow]LOG: Packet/ACK {packet.seq_num} delayed in channel.[/bold yellow]')
+            threading.Thread(target=self.wait_and_deliver, args=(packet, destination)).start()
+            return
+
+        destination.receivePacket(packet)
+
+    def wait_and_deliver(self, packet, destination):
+        sleep(self.delay_time)
+        destination.receivePacket(packet)
