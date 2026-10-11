@@ -1,6 +1,6 @@
 import hashlib
 
-class Pacet:
+class Packet:
     def __init__(self, seq_num, is_ack, payload=''):
         self.seq_num = seq_num
         self.is_ack = is_ack
