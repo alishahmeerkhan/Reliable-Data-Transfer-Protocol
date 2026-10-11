@@ -1,4 +1,4 @@
-from time import perf_counter
+import threading
 from rich import print
 from packets import Packet
 
@@ -13,6 +13,7 @@ class GBNSender:
         self.base = 0
         self.next_seqnum = 0
         self.buffer = []
+        self.timer = None
 
     def send_data(self, payload):
         if len(self.buffer) >= self.window_size:
@@ -38,9 +39,13 @@ class GBNSender:
 
         ack_num = ack_packet.seq_num
         print(f'[bold yellow]LOG: Sender received ACK {ack_num}.[/bold yellow]')
+        unacked_seqs = [packet.seq_num for packet in self.buffer]
 
-        if ack_num >= 0 and ack_num in self.buffer:
-            self.buffer.remove(element for element in self.buffer if element <= ack_num)
+        if ack_num in unacked_seqs:
+            while len(self.buffer) > 0:
+                popped_packet = self.buffer.pop(0)
+                if popped_packet.seq_num == ack_num:
+                    break
 
             self.base = (ack_num + 1) % self.max_seq
 
@@ -57,10 +62,13 @@ class GBNSender:
             self.channel.transmit(packet, self.receiver)
 
     def start_timer(self):
-        starting_time = perf_counter()
+        self.stop_timer()
+        self.timer = threading.Timer(self.timeout_duration, self.on_timeout)
+        self.timer.start()
 
     def stop_timer(self):
-        ending_time = perf_counter()
+        if self.timer is not None:
+            self.timer.cancel()
 
 class GBNReceiver:
     def __init__(self, seq_bit, channel, sender):
