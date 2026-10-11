@@ -20,7 +20,7 @@ class GBNSender:
             print(f'[bold yellow]LOG: Window full, refusing new data.[/bold yellow]')
             return
 
-        packet = Packet(self.next_seqnum, is_ack=False, payload=payload)
+        packet = Packet(seq_num=self.next_seqnum, is_ack=False, payload=payload)
         self.buffer.append(packet)
 
         print(f'[bold yellow]LOG: Sender sending packet {packet.seq_num}[/bold yellow]')
@@ -93,7 +93,7 @@ class GBNReceiver:
 
         self.deliver_data(packet.payload)
 
-        ack_packet = Packet(self.expected_seqnum, is_ack=True, payload='')
+        ack_packet = Packet(seq_num=self.expected_seqnum, is_ack=True, payload='')
         print(f'[bold yellow]LOG: Receiver sending ACK {self.expected_seqnum}.[/bold yellow]')
         self.channel.transmit(ack_packet, self.sender)
 
@@ -101,7 +101,7 @@ class GBNReceiver:
 
     def send_duplicate_ack(self):
         last_ack_num = (self.expected_seqnum - 1) % self.max_seq
-        ack_packet = Packet(last_ack_num, is_ack=True, payload='')
+        ack_packet = Packet(seq_num=last_ack_num, is_ack=True, payload='')
         print(f'[bold yellow]LOG: Receiver sending duplicate ACK {last_ack_num}.[/bold yellow]')
         self.channel.transmit(ack_packet, self.sender)
 
