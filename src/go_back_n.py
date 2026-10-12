@@ -106,5 +106,5 @@ class GBNReceiver:
         self.channel.transmit(ack_packet, self.sender)
 
     def deliver_data(self, payload):
-        with open('received_data.txt', 'a') as file:
+        with open('received_data_gbn.txt', 'a') as file:
             file.write(payload)
