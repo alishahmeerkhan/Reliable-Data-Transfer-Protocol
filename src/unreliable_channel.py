@@ -5,11 +5,12 @@ import random, threading
 random.seed(2562)
 
 class UnreliableChannel:
-    def __init__(self, loss_prob, corrupt_prob, delay_prob, delay_time):
+    def __init__(self, loss_prob, corrupt_prob, delay_prob, delay_time, stats):
         self.loss_prob = loss_prob
         self.corrupt_prob = corrupt_prob
         self.delay_prob = delay_prob
         self.delay_time = delay_time
+        self.stats = stats
 
     def transmit(self, packet, destination):
         if random.random() < self.loss_prob:

@@ -26,6 +26,7 @@ class SRSender:
         self.acked_status[self.next_seqnum] = False
 
         print(f'[bold yellow]LOG: Sender sending packet {packet.seq_num}.[/bold yellow]')
+        self.channel.stats.increament_transmitted()
         self.channel.transmit(packet, self.receiver)
 
         self.start_timer(self.next_seqnum)
@@ -41,28 +42,28 @@ class SRSender:
 
         self.acked_status[ack_num] = True
         self.end_timer(ack_num)
-        self.start_timer(self.next_seqnum)
 
         
         while self.acked_status.get(self.base, False) == True:
-            self.buffer.pop(ack_num)
-            self.timers.pop(self.base)
-            self.acked_status.pop(self.base)
+            self.buffer.pop(self.base, None)
+            self.timers.pop(self.base, None)
+            self.acked_status.pop(self.base, None)
 
             self.base = (self.base + 1) % self.max_seq
 
     def on_timeout(self, seq_num):
         print(f'[bold yellow]LOG: Sender Timeout for {seq_num}. Retransmitting single packet.[/bold yellow]')
         self.start_timer(seq_num)
+        self.channel.stats.increament_retransmitted()
         self.channel.transmit(self.buffer[seq_num], self.receiver)
 
     def start_timer(self, seq_num):
-        self.stop_timer()
+        self.end_timer()
         self.timers[seq_num] = threading.Timer(self.timeout_duration, self.on_timeout, args=(seq_num,))
-        self.timer[seq_num].start()
+        self.timers[seq_num].start()
 
     def end_timer(self, seq_num):
-        if self.timers[seq_num] not in self.timers or self.timers[seq_num] is not None:
+        if seq_num not in self.timers or self.timers[seq_num] is not None:
             self.timer.cancel()
 
 class SRReceiver:
@@ -91,7 +92,7 @@ class SRReceiver:
 
             
             while self.base in self.buffer:
-                self.deliver_data(packet.payload)
+                self.deliver_data(self.buffer[self.base])
                 self.buffer.pop(self.base)
                 self.base = (self.base + 1) % self.max_seq
 
@@ -102,3 +103,4 @@ class SRReceiver:
     def deliver_data(self, payload):
         with open('received_data_sr.txt', 'a') as file:
             file.write(payload)
+        self.channel.stats.increament_delivery()

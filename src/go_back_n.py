@@ -24,6 +24,7 @@ class GBNSender:
         self.buffer.append(packet)
 
         print(f'[bold yellow]LOG: Sender sending packet {packet.seq_num}[/bold yellow]')
+        self.channel.stats.increament_transmitted()
         self.channel.transmit(packet, self.receiver)
 
         if self.base == self.next_seqnum:
@@ -59,6 +60,7 @@ class GBNSender:
 
         for packet in self.buffer:
             print(f'[bold yellow]LOG: Sender retransmitting packet {packet.seq_num}.[/bold yellow]')
+            self.channel.stats.increament_retransmitted()
             self.channel.transmit(packet, self.receiver)
 
     def start_timer(self):
@@ -95,6 +97,7 @@ class GBNReceiver:
 
         ack_packet = Packet(seq_num=self.expected_seqnum, is_ack=True, payload='')
         print(f'[bold yellow]LOG: Receiver sending ACK {self.expected_seqnum}.[/bold yellow]')
+        self.channel.stats.increament_transmitted()
         self.channel.transmit(ack_packet, self.sender)
 
         self.expected_seqnum = (self.expected_seqnum + 1) % self.max_seq
@@ -108,3 +111,4 @@ class GBNReceiver:
     def deliver_data(self, payload):
         with open('received_data_gbn.txt', 'a') as file:
             file.write(payload)
+        self.channel.stats.increament_delivery()
