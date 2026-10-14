@@ -27,9 +27,10 @@ class SRSender:
 
         print(f'[bold yellow]LOG: Sender sending packet {packet.seq_num}.[/bold yellow]')
         self.channel.stats.increament_transmitted()
-        self.channel.transmit(packet, self.receiver)
 
         self.start_timer(self.next_seqnum)
+        self.channel.transmit(packet, self.receiver)
+
         self.next_seqnum = (self.next_seqnum + 1) % self.max_seq
 
     def receive_packet(self, ack_packet):
@@ -58,13 +59,14 @@ class SRSender:
         self.channel.transmit(self.buffer[seq_num], self.receiver)
 
     def start_timer(self, seq_num):
-        self.end_timer()
+        self.end_timer(seq_num)
         self.timers[seq_num] = threading.Timer(self.timeout_duration, self.on_timeout, args=(seq_num,))
         self.timers[seq_num].start()
 
     def end_timer(self, seq_num):
-        if seq_num not in self.timers or self.timers[seq_num] is not None:
-            self.timer.cancel()
+        if seq_num in self.timers and self.timers[seq_num] is not None:
+            self.timers[seq_num].cancel()
+            self.timers.pop(seq_num, None)
 
 class SRReceiver:
     def __init__(self, window_size, seq_bits, channel, sender):

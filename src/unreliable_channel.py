@@ -26,8 +26,8 @@ class UnreliableChannel:
             threading.Thread(target=self.wait_and_deliver, args=(packet, destination)).start()
             return
 
-        destination.receivePacket(packet)
+        destination.receive_packet(packet)
 
     def wait_and_deliver(self, packet, destination):
         sleep(self.delay_time)
-        destination.receivePacket(packet)
+        destination.receive_packet(packet)
