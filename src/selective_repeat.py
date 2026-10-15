@@ -1,5 +1,6 @@
 import threading
 from rich import print
+from pathlib import Path
 from packets import Packet
 
 class SRSender:
@@ -103,6 +104,8 @@ class SRReceiver:
         return diff < self.window_size
 
     def deliver_data(self, payload):
-        with open('received_data_sr.txt', 'a') as file:
-            file.write(payload)
+        path = Path(__file__).resolve().parent.parent / 'application_layer/received_data_sr.txt'
+
+        with open(path, 'a') as file:
+            file.write(payload + '\n')
         self.channel.stats.increament_delivery()

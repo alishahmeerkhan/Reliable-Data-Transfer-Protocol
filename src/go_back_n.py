@@ -1,5 +1,6 @@
 import threading
 from rich import print
+from pathlib import Path
 from packets import Packet
 
 class GBNSender:
@@ -109,6 +110,8 @@ class GBNReceiver:
         self.channel.transmit(ack_packet, self.sender)
 
     def deliver_data(self, payload):
-        with open('received_data_gbn.txt', 'a') as file:
-            file.write(payload)
+        path = Path(__file__).resolve().parent.parent / 'application_layer/received_data_gbn.txt'
+
+        with open(path, 'a') as file:
+            file.write(payload + '\n')
         self.channel.stats.increament_delivery()
