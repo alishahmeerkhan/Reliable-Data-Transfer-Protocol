@@ -18,7 +18,7 @@ def parse_arguments():
     parser.add_argument('--loss_prob', type=float, default=0.0)
     parser.add_argument('--corrupt_prob', type=float, default=0.0)
     parser.add_argument('--delay_prob', type=float, default=0.0)
-    parser.add_argument('--delay_time', type=float, default=0.2)
+    parser.add_argument('--delay_time', type=float, default=0.005)
 
     parser.add_argument('--scenario', default=None, help='Name of the test scenario')
 

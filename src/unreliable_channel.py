@@ -1,6 +1,6 @@
 from rich import print
 from time import sleep
-import random, threading
+import random, threading, copy
 
 random.seed(2562)
 
@@ -13,6 +13,8 @@ class UnreliableChannel:
         self.stats = stats
 
     def transmit(self, packet, destination):
+        transmit_packet = copy.deepcopy(packet)
+
         if random.random() < self.loss_prob:
             print(f'[bold yellow]LOG: Packet/ACK {packet.seq_num} lost in channel.[/bold yellow]')
             return
@@ -26,7 +28,7 @@ class UnreliableChannel:
             threading.Thread(target=self.wait_and_deliver, args=(packet, destination)).start()
             return
 
-        destination.receive_packet(packet)
+        destination.receive_packet(transmit_packet)
 
     def wait_and_deliver(self, packet, destination):
         sleep(self.delay_time)

@@ -41,7 +41,7 @@ class GBNSender:
 
         ack_num = ack_packet.seq_num
         print(f'[bold yellow]LOG: Sender received ACK {ack_num}.[/bold yellow]')
-        unacked_seqs = [packet.seq_num for packet in self.buffer]
+        unacked_seqs = [packet.seq_num for packet in list(self.buffer)]
 
         if ack_num in unacked_seqs:
             while len(self.buffer) > 0:
@@ -59,7 +59,7 @@ class GBNSender:
         print(f'[bold yellow]LOG: Sender Timeout! Retransmitting all outstanding packets.[/bold yellow]')
         self.start_timer()
 
-        for packet in self.buffer:
+        for packet in list(self.buffer):
             print(f'[bold yellow]LOG: Sender retransmitting packet {packet.seq_num}.[/bold yellow]')
             self.channel.stats.increament_retransmitted()
             self.channel.transmit(packet, self.receiver)

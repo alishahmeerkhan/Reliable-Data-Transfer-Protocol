@@ -95,9 +95,11 @@ class SRReceiver:
 
             
             while self.base in self.buffer:
-                self.deliver_data(self.buffer[self.base])
-                self.buffer.pop(self.base)
-                self.base = (self.base + 1) % self.max_seq
+                payload = self.buffer.pop(self.base, None)
+
+                if payload is not None:
+                    self.deliver_data(payload=payload)
+                    self.base = (self.base + 1) % self.max_seq
 
     def is_in_window(self, seq_num):
         diff = (seq_num - self.base) % self.max_seq

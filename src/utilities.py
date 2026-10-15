@@ -45,7 +45,7 @@ class SimulationStats:
             writer = csv.writer(file)
 
             if not file_exists:
-                writer.writerow(['Protocol', 'Scenario', 'Transmitted', 'Retransmissions'
+                writer.writerow(['Protocol', 'Scenario', 'Transmitted', 'Retransmissions',
                                  'Deliveries', 'Time (s)'])
 
             writer.writerow([protocol.upper(), scenario, self.total_transmitted, self.retransmission,
