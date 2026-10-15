@@ -20,6 +20,8 @@ def parse_arguments():
     parser.add_argument('--delay_prob', type=float, default=0.0)
     parser.add_argument('--delay_time', type=float, default=0.2)
 
+    parser.add_argument('--scenario', default='Custom', help='Name of the test scenario')
+
     return parser.parse_args()
 
 def main():
@@ -57,6 +59,9 @@ def main():
 
     stats.stop_timer()
     stats.get_report()
+
+    if args.scenario:
+        stats.save_to_csv(args.protocol, args.scenario)
 
 if __name__ == '__main__':
     main() 
