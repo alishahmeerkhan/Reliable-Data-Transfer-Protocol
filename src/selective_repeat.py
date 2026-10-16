@@ -78,6 +78,7 @@ class SRReceiver:
         self.sender = sender
         self.base = 0
         self.buffer = {}
+        self.file_lock = threading.Lock()
 
     def receive_packet(self, packet):
         if packet.isCorrupted():
@@ -108,6 +109,7 @@ class SRReceiver:
     def deliver_data(self, payload):
         path = Path(__file__).resolve().parent.parent / 'application_layer/received_data_sr.txt'
 
-        with open(path, 'a') as file:
-            file.write(payload + '\n')
+        with self.file_lock:
+            with open(path, 'a') as file:
+                file.write(payload + '\n')
         self.channel.stats.increament_delivery()

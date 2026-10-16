@@ -80,6 +80,7 @@ class GBNReceiver:
         self.expected_seqnum = 0
         self.channel = channel
         self.sender = sender
+        self.file_lock = threading.Lock()
 
     def receive_packet(self, packet):
         if packet.isCorrupted():
@@ -112,6 +113,7 @@ class GBNReceiver:
     def deliver_data(self, payload):
         path = Path(__file__).resolve().parent.parent / 'application_layer/received_data_gbn.txt'
 
-        with open(path, 'a') as file:
-            file.write(payload + '\n')
+        with self.file_lock:
+            with open(path, 'a') as file:
+                file.write(payload + '\n')
         self.channel.stats.increament_delivery()

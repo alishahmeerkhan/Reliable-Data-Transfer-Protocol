@@ -1,6 +1,6 @@
 import argparse
 from rich import print
-from time import time, sleep
+from time import sleep
 from unreliable_channel import UnreliableChannel
 from go_back_n import GBNSender, GBNReceiver
 from selective_repeat import SRSender, SRReceiver
@@ -51,6 +51,7 @@ def main():
         if len(sender.buffer) < args.window_size:
             sender.send_data(payload=payload)
             current_packet += 1
+            sleep(0.01)
         else:
             sleep(0.1)
 
