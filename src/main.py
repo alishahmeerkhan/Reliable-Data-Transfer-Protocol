@@ -41,7 +41,7 @@ def main():
         sender = SRSender(args.window_size, args.seq_bits, args.timeout, channel, receiver)
         receiver.sender = sender
 
-    print(f'[bold green]Starting Simulation for Protocol: [/bold green]{args.protocol}')
+    print(f'[bold green]Starting Simulation for Protocol: [/bold green]{args.protocol}', end='\n\n')
     stats.start_timer()
 
     current_packet = 0

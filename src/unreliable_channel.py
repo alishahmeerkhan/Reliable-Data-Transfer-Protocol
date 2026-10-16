@@ -16,15 +16,15 @@ class UnreliableChannel:
         transmit_packet = copy.deepcopy(packet)
 
         if random.random() < self.loss_prob:
-            print(f'[bold yellow]LOG: Packet/ACK {packet.seq_num} lost in channel.[/bold yellow]')
+            print(f'[bold red]LOG: Packet/ACK {packet.seq_num} lost in channel.[/bold red]')
             return
 
         if random.random() < self.corrupt_prob:
             transmit_packet.payload = 'CORRUPTED_' + transmit_packet.payload
-            print(f'[bold yellow]LOG: Packet/ACk {transmit_packet.seq_num} corrupted in channel.[/bold yellow]')
+            print(f'[bold red]LOG: Packet/ACk {transmit_packet.seq_num} corrupted in channel.[/bold red]')
 
         if random.random() < self.delay_prob:
-            print(f'[bold yellow]LOG: Packet/ACK {packet.seq_num} delayed in channel.[/bold yellow]')
+            print(f'[bold red]LOG: Packet/ACK {packet.seq_num} delayed in channel.[/bold red]')
             threading.Thread(target=self.wait_and_deliver, args=(transmit_packet, destination)).start()
             return
 

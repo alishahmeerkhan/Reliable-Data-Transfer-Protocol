@@ -19,14 +19,14 @@ class SRSender:
 
     def send_data(self, payload):
         if len(self.buffer) >= self.window_size:
-            print(f'[bold yellow]LOG: Window full, refusing new data.[/bold yellow]')
+            print(f'[bold red]LOG: Window full, refusing new data.[/bold red]')
             return
 
         packet = Packet(seq_num=self.next_seqnum, is_ack=False, payload=payload)
         self.buffer[self.next_seqnum] = packet
         self.acked_status[self.next_seqnum] = False
 
-        print(f'[bold yellow]LOG: Sender sending packet {packet.seq_num}.[/bold yellow]')
+        print(f'[bold white]LOG: Sender sending packet {packet.seq_num}.[/bold white]')
         self.channel.stats.increament_transmitted()
 
         self.start_timer(self.next_seqnum)
@@ -36,11 +36,11 @@ class SRSender:
 
     def receive_packet(self, ack_packet):
         if ack_packet.isCorrupted():
-            print(f'[bold yellow]LOG: Sender received corrupted ACK, ignoring.[/bold yellow]')
+            print(f'[bold red]LOG: Sender received corrupted ACK, ignoring.[/bold red]')
             return
 
         ack_num = ack_packet.seq_num
-        print(f'[bold yellow]LOG: Sender received individual ACK {ack_num}.[/bold yellow]')
+        print(f'[bold white]LOG: Sender received individual ACK {ack_num}.[/bold white]')
 
         self.acked_status[ack_num] = True
         self.end_timer(ack_num)
@@ -82,11 +82,11 @@ class SRReceiver:
 
     def receive_packet(self, packet):
         if packet.isCorrupted():
-            print(f'[bold yellow]LOG: Receiver dropped corrupted packet {packet.seq_num}.[/bold yellow]')
+            print(f'[bold red]LOG: Receiver dropped corrupted packet {packet.seq_num}.[/bold red]')
             return
 
         seq_num = packet.seq_num
-        print(f'[bold yellow]LOG: Receiver received packet {seq_num}.[/bold yellow]')
+        print(f'[bold white]LOG: Receiver received packet {seq_num}.[/bold white]')
 
         ack_packet = Packet(seq_num=seq_num, is_ack=True)
         self.channel.transmit(ack_packet, self.sender)

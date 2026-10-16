@@ -18,13 +18,13 @@ class GBNSender:
 
     def send_data(self, payload):
         if len(self.buffer) >= self.window_size:
-            print(f'[bold yellow]LOG: Window full, refusing new data.[/bold yellow]')
+            print(f'[bold red]LOG: Window full, refusing new data.[/bold red]')
             return
 
         packet = Packet(seq_num=self.next_seqnum, is_ack=False, payload=payload)
         self.buffer.append(packet)
 
-        print(f'[bold yellow]LOG: Sender sending packet {packet.seq_num}[/bold yellow]')
+        print(f'[bold white]LOG: Sender sending packet {packet.seq_num}[/bold white]')
         self.channel.stats.increament_transmitted()
         self.channel.transmit(packet, self.receiver)
 
@@ -36,11 +36,11 @@ class GBNSender:
 
     def receive_packet(self, ack_packet):
         if ack_packet.isCorrupted():
-            print(f'[bold yellow]LOG: Sender received corrupted ACK, ignoring.[/bold yellow]')
+            print(f'[bold red]LOG: Sender received corrupted ACK, ignoring.[/bold red]')
             return
 
         ack_num = ack_packet.seq_num
-        print(f'[bold yellow]LOG: Sender received ACK {ack_num}.[/bold yellow]')
+        print(f'[bold white]LOG: Sender received ACK {ack_num}.[/bold white]')
         unacked_seqs = [packet.seq_num for packet in list(self.buffer)]
 
         if ack_num in unacked_seqs:
@@ -84,7 +84,7 @@ class GBNReceiver:
 
     def receive_packet(self, packet):
         if packet.isCorrupted():
-            print(f'[bold yellow]LOG: Receiver dropped corrupted packet {packet.seq_num}.[/bold yellow]')
+            print(f'[bold red]LOG: Receiver dropped corrupted packet {packet.seq_num}.[/bold red]')
             self.send_duplicate_ack()
             return
 
@@ -93,12 +93,12 @@ class GBNReceiver:
             self.send_duplicate_ack()
             return
 
-        print(f'[bold yellow]LOG: Receiver successfully received packet {packet.seq_num}.[/bold yellow]')
+        print(f'[bold white]LOG: Receiver successfully received packet {packet.seq_num}.[/bold white]')
 
         self.deliver_data(packet.payload)
 
         ack_packet = Packet(seq_num=self.expected_seqnum, is_ack=True, payload='')
-        print(f'[bold yellow]LOG: Receiver sending ACK {self.expected_seqnum}.[/bold yellow]')
+        print(f'[bold white]LOG: Receiver sending ACK {self.expected_seqnum}.[/bold white]')
         self.channel.stats.increament_transmitted()
         self.channel.transmit(ack_packet, self.sender)
 

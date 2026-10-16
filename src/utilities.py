@@ -31,7 +31,7 @@ class SimulationStats:
         self.successful_deliveries += 1
 
     def get_report(self):
-        print('[bold white]--- Simulation Results ---[/bold white]')
+        print('\n\n' + '[bold white]--- Simulation Results ---[/bold white]')
         print(f'[white]Total Packets Transmitted:   [/white][bright_cyan]{self.total_transmitted}[/bright_cyan]')
         print(f'[white]Total Packets Retransmitted: [/white][bright_cyan]{self.retransmission}[/bright_cyan]')
         print(f'[white]Total Successful Deliveries: [/white][bright_cyan]{self.successful_deliveries}[/bright_cyan]')
