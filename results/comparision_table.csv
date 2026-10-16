@@ -1,0 +1,3 @@
+Protocol,Scenario,Transmitted,Retransmissions,Deliveries,Time (s)
+GBN,GBN_A,400,0,200,0.4271
+SR,SR_A,200,0,200,0.3739

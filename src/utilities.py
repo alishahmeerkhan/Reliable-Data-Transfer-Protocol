@@ -1,6 +1,7 @@
 import os, csv
 from time import time
 from rich import print
+from pathlib import Path
 
 class SimulationStats:
     def __init__(self):
@@ -37,8 +38,8 @@ class SimulationStats:
         print(f'[white]Total Execution Time:        [/white][bright_cyan]{self.get_execution_time():.6f} seconds[/bright_cyan]')
 
     def save_to_csv(self, protocol, scenario):
-        os.makedirs('results', exist_ok=True)
-        path = 'results/comparision_table.csv'
+        path = Path(__file__).resolve().parent.parent / 'results/comparision_table.csv'
+        path.parent.mkdir(parents=True, exist_ok=True)
         file_exists = os.path.isfile(path)
 
         with open(path, 'a', newline='') as file:
