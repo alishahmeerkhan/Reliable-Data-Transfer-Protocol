@@ -99,7 +99,6 @@ class GBNReceiver:
 
         ack_packet = Packet(seq_num=self.expected_seqnum, is_ack=True, payload='')
         print(f'[bold white]LOG: Receiver sending ACK {self.expected_seqnum}.[/bold white]')
-        self.channel.stats.increament_transmitted()
         self.channel.transmit(ack_packet, self.sender)
 
         self.expected_seqnum = (self.expected_seqnum + 1) % self.max_seq
